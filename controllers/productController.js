@@ -65,7 +65,6 @@ const listProducts = async (req, res) => {
 // function for removing product
 const removeProduct = async (req, res) => {
     try {
-        
         await productModel.findByIdAndDelete(req.body.id)
         res.json({success:true,message:"Product Removed"})
 
@@ -73,6 +72,11 @@ const removeProduct = async (req, res) => {
         console.log(error)
         res.json({ success: false, message: error.message })
     }
+}
+
+const editProduct = async (req, res) => {
+    console.log(req.body)
+    res.send('Success Update')
 }
 
 // function for single product info
@@ -96,9 +100,7 @@ const updateProduct = async (req, res) => {
             body: req.body,
             files: req.files
         });
-
-        const { id } = req.params;
-        const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
+        const {id, name, description, price, category, subCategory, sizes, bestseller } = req.body;
 
         const product = await Product.findById(id);
         if (!product) {
@@ -106,12 +108,14 @@ const updateProduct = async (req, res) => {
         }
 
         // Update basic fields
+        product.id = id || product.id
         product.name = name || product.name;
         product.description = description || product.description;
         product.price = Number(price) || product.price;
         product.category = category || product.category;
         product.subCategory = subCategory || product.subCategory;
-        product.sizes = sizes ? JSON.parse(sizes) : product.sizes;
+        // product.sizes = sizes ? JSON.parse(sizes) : product.sizes;
+        product.sizes = sizes || product.sizes;
         product.bestseller = bestseller === "true" ? true : false;
 
         // Handle image updates

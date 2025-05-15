@@ -6,6 +6,7 @@ import connectCloudinary from './config/cloudinary.js'
 import userRouter from './routes/userRoute.js'
 import productRouter from './routes/productRoute.js'
 import cartRouter from './routes/cartRoute.js'
+import { updateProduct } from './controllers/productController.js'
 import orderRouter from './routes/orderRoute.js'
 import subscriptionRouter from './routes/subscriptionRoute.js'
 
@@ -20,6 +21,9 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+
+
+
 // Routes
 app.use('/api/user', userRouter)
 app.use('/api/product', productRouter)
@@ -30,6 +34,8 @@ app.use('/api/subscription', subscriptionRouter)
 app.get('/',(req,res)=>{
     res.send("API Working")
 })
+
+app.post('/api/product/update',updateProduct)
 
 // Error handling
 app.use((err, req, res, next) => {
