@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from "cloudinary"
 import productModel from "../models/productModel.js"
 import Product from '../models/productModel.js';
+import nodemailer from 'nodemailer'
 import fs from 'fs';
 import path from 'path';
 
@@ -52,9 +53,9 @@ const addProduct = async (req, res) => {
 // function for list product
 const listProducts = async (req, res) => {
     try {
-        
+
         const products = await productModel.find({});
-        res.json({success:true,products})
+        res.json({ success: true, products })
 
     } catch (error) {
         console.log(error)
@@ -66,7 +67,7 @@ const listProducts = async (req, res) => {
 const removeProduct = async (req, res) => {
     try {
         await productModel.findByIdAndDelete(req.body.id)
-        res.json({success:true,message:"Product Removed"})
+        res.json({ success: true, message: "Product Removed" })
 
     } catch (error) {
         console.log(error)
@@ -79,13 +80,52 @@ const editProduct = async (req, res) => {
     res.send('Success Update')
 }
 
+
+// function for sending email
+const sendEmail = async (req, res) => {
+    const sender = 'xgaming9050@gmail.com'
+    const password = "edigzdpfacawsszr"
+    const email = req.body.email;
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: sender,
+            pass: password,
+        },
+    });
+
+    (async () => {
+        try {
+            const info = await transporter.sendMail({
+                from: sender,
+                to: email,
+                subject: "Subscribing Confirmation",
+                html: `
+        <h2>Thanks for Subscribing to Trendwear!</h2>
+        <p>We'll keep you updated with the latest offers and promotions.</p>
+        <br/>
+        <p>— The Trendwear Team</p>
+    `,
+            });
+
+            console.log('Email sent Successfully')
+            res.json({ success: true, message: 'Message Sent Successfully' });
+        }
+        catch (error) {
+            console.log('Failed to send Email')
+            res.json({ success: false, message: 'Error Sending Email' });
+        }
+
+    })();
+}
+
 // function for single product info
 const singleProduct = async (req, res) => {
     try {
-        
+
         const { productId } = req.body
         const product = await productModel.findById(productId)
-        res.json({success:true,product})
+        res.json({ success: true, product })
 
     } catch (error) {
         console.log(error)
@@ -100,7 +140,7 @@ const updateProduct = async (req, res) => {
             body: req.body,
             files: req.files
         });
-        const {id, name, description, price, category, subCategory, sizes, bestseller } = req.body;
+        const { id, name, description, price, category, subCategory, sizes, bestseller } = req.body;
 
         const product = await Product.findById(id);
         if (!product) {
@@ -148,7 +188,7 @@ const updateProduct = async (req, res) => {
     }
 };
 
-export { listProducts, addProduct, removeProduct, singleProduct, updateProduct }
+export { listProducts, addProduct, removeProduct, singleProduct, updateProduct, sendEmail }
 
 // Get single product by ID
 const getProduct = async (req, res) => {

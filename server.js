@@ -6,7 +6,7 @@ import connectCloudinary from './config/cloudinary.js'
 import userRouter from './routes/userRoute.js'
 import productRouter from './routes/productRoute.js'
 import cartRouter from './routes/cartRoute.js'
-import { updateProduct } from './controllers/productController.js'
+import { updateProduct, sendEmail } from './controllers/productController.js'
 import orderRouter from './routes/orderRoute.js'
 import subscriptionRouter from './routes/subscriptionRoute.js'
 
@@ -36,6 +36,7 @@ app.get('/',(req,res)=>{
 })
 
 app.post('/api/product/update',updateProduct)
+app.post('/sendemail', sendEmail)
 
 // Error handling
 app.use((err, req, res, next) => {
